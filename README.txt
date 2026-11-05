@@ -1,21 +1,15 @@
-ØSTERGADES POS 1.0 – TESTVERSION
+Østergades POS v1.2 – GitHub Pages / PWA TESTVERSION
 
-Åbn index.html i Chrome/Edge for at teste med det samme.
-PIN medarbejder: 1234
-PIN administrator: 9999
+Upload ALLE filer fra ZIP til roden af dit GitHub-repository.
+GitHub → Settings → Pages → Deploy from a branch → main → /(root).
+Installer fra Edge via menuen Apps → Installer dette websted som en app.
 
-Windows-app (kræver Node.js på en Windows-computer):
-1. Pak ZIP-filen ud.
-2. Åbn terminalen i mappen.
-3. Kør: npm install
-4. Kør: npm start
-5. For at bygge installationsfil: npm run dist
+Demo-PIN: medarbejder 1234, administrator 9999.
+Forsiden indeholder kasse og alle pakkefelter. GLS/DAO ud/AROX er hele dagstotaler, DAO ind har stor +1-knap.
+Pakkedata gemmes kun lokalt i browseren på den enkelte PC. Tidligere dage bevares.
+Ingen Supabase-synkronisering endnu; 15-minuttersplanen er IKKE implementeret.
+Ingen sikker serverbaseret adgangskontrol; demo-PIN kan omgås.
+Bonprint via Windows printdialog er ikke testet på HS-58CUB.
+Ikke godkendt til lovpligtig kassebrug. Brug kun testdata.
 
-VIGTIGT:
-Dette er en lokal prototype, ikke et produktionsklart POS-system.
-PIN-koder er hårdkodede og ikke sikre.
-Supabase/PakkeTracker-synkronisering er IKKE implementeret.
-Data gemmes i localStorage på den enkelte computer. Tag JSON-backup.
-Printeren bruger Windows' normale printdialog; direkte HS-58CUB-integration er ikke testet.
-Ingen lovpligtig kasselogning/SAF-T eller automatisk MobilePay-afstemning.
-Brug ikke prototypen som lovpligtigt kassesystem.
+Ved opdatering fra v1.1 på samme domæne bevares normalt browserens lokale data. Eksporter backup før opdatering.
