@@ -5,16 +5,16 @@
 /* POS v1.5 touch layout */
 #userChip{display:flex;align-items:center;gap:9px;padding:5px 12px 5px 5px}#userAvatar{width:44px;height:44px;border-radius:50%;object-fit:cover;background:#3088c4}#userChip span{font-weight:700}.pos-top{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(300px,1fr);gap:10px}.pos-top .card{margin-bottom:8px}.pos-top h2,.packages-section h2{margin:0 0 9px;font-size:19px}.pos-products,.pos-cart{padding:12px}.category-buttons{display:flex;gap:7px;overflow-x:auto;padding:8px 0}.category-buttons button{white-space:nowrap;min-height:43px;padding:9px 13px;background:#29405a}.category-buttons button.selected{background:#f3c932;color:#102238}.product-buttons{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:7px;max-height:230px;overflow:auto}.product-buttons button{display:flex;flex-direction:column;align-items:center;gap:5px;padding:7px;min-height:92px;font-size:13px}.product-buttons img{width:62px;height:54px;object-fit:cover;border-radius:7px}.pos-cart #cartList{max-height:220px;overflow:auto}.pos-cart .row button{flex:1;padding:9px}.packages-section{padding:12px}.package-layout{display:grid;grid-template-columns:1fr 1fr;gap:12px}.package-layout .dao-card{grid-column:1;grid-row:1}.package-other{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;grid-column:2;grid-row:1}.package-other .card{padding:8px;margin:0}.package-other label{margin:0 0 4px;font-size:12px}.package-other input{font-size:19px;padding:8px;width:100%}.package-layout .dao-plus{min-height:92px}.package-layout .dao-card{margin:0;padding:12px}.package-layout .dao-card h2{margin:0}.admin-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}.admin-tabs button{background:#293e57}.admin-tabs button.selected{background:#f3c932;color:#102238}.product-admin-img{width:52px;height:52px;object-fit:cover;border-radius:8px}.item select{max-width:180px}.item input[type=file]{max-width:160px;font-size:11px}@media(min-width:1050px){main{max-width:1700px;padding:10px 16px}.nav{margin-bottom:8px}header{padding:7px 18px}.card{margin-bottom:8px}}@media(max-width:900px){.pos-top{grid-template-columns:1fr}.package-layout{grid-template-columns:1fr}.package-layout .dao-card,.package-other{grid-column:1;grid-row:auto}}@media(max-width:560px){.package-other{grid-template-columns:repeat(2,minmax(0,1fr))}.product-buttons{grid-template-columns:repeat(2,1fr)}}
 .brandline{display:flex;align-items:center;gap:12px}.brandline img{height:52px;max-width:160px;object-fit:contain}.importlabel{display:inline-flex;align-items:center;gap:6px;background:#29405a;border-radius:8px;padding:10px;cursor:pointer}.importlabel input{max-width:180px}.month-receipt{page-break-after:always;border-bottom:1px dashed #aaa;padding:14px 0;color:#111}.month-receipt:last-child{page-break-after:auto}@media print{.month-receipt{break-after:page}}
-</style></head><body><header><div><div class="brandline"><img src="./logo-header.png" alt="Østergades Pakkeshop"><h1>Østergades POS</h1></div><small>v1.6</small></div><div class="row"><button id="userChip" class="secondary hidden" onclick="logout()" title="Tryk for at logge ud"><img id="userAvatar" src="./icon-192.png" alt="Aktiv medarbejder"><span id="who"></span><span aria-hidden="true">↪</span></button></div></header><main>
-<section id="loginView" class="login-stage"><h2>Hvem arbejder i dag?</h2><p class="muted">Tryk på din profil for at åbne kassen</p><div id="profileTiles" class="profile-grid"></div><div class="row" style="justify-content:center;margin-top:24px"><button class="admin-entry" onclick="showAdminLogin()">⚙ Administration (PIN-kode)</button></div><div id="adminLogin" class="card hidden" style="max-width:360px;margin:16px auto"><label>Administrator-PIN</label><div class="row"><input id="pin" type="password" inputmode="numeric" maxlength="8" style="flex:1" onkeydown="if(event.key==='Enter')login()"><button onclick="login()">Åbn</button></div><p id="loginError" style="color:#ff9c9c"></p></div></section>
-<section id="app" class="hidden"><div class="nav"><button id="navPos" onclick="tab('pos')">🛒 Kasse</button><button id="navAdmin" class="hidden" onclick="tab('admin')">⚙️ Administrator</button></div><div id="notice"></div>
+</style></head><body><header><div><div class="brandline"><img src="./logo-header.png" alt="Østergades Pakkeshop"><h1>Østergades POS</h1></div><small>v1.7</small></div><div class="row"><button id="userChip" class="secondary hidden" onclick="logout()" title="Tryk for at logge ud"><img id="userAvatar" src="./icon-192.png" alt="Aktiv medarbejder"><span id="who"></span><span aria-hidden="true">↪</span></button></div></header><main>
+<section id="cloudLogin" class="login-stage"><h2>Log ind på Østergades POS</h2><p class="muted">Brug din eksisterende PakkeTracker-konto</p><div class="card" style="max-width:440px;margin:18px auto;text-align:left"><label>E-mail</label><input id="cloudEmail" type="email" autocomplete="username" placeholder="Din e-mail"><label>Adgangskode</label><input id="cloudPassword" type="password" autocomplete="current-password" placeholder="Adgangskode" onkeydown="if(event.key==='Enter')cloudSignIn()"><button style="width:100%;margin-top:12px" onclick="cloudSignIn()">Log ind</button><p id="cloudError" class="muted" role="status"></p></div></section><section id="loginView" class="login-stage hidden" class="login-stage"><h2>Hvem arbejder i dag?</h2><p class="muted">Tryk på din profil for at åbne kassen</p><div id="profileTiles" class="profile-grid"></div><div class="row" style="justify-content:center;margin-top:24px"><button class="admin-entry" onclick="showAdminLogin()">⚙ Administration</button></div></section>
+<section id="app" class="hidden"><div class="nav"><button id="navPos" onclick="tab('pos')">🛒 Kasse</button><button id="navAdmin" class="hidden" onclick="tab('admin')">⚙️ Administrator</button></div><div id="notice"></div><div class="row" style="justify-content:flex-end"><small id="cloudStatus" class="muted">Cloud: ikke forbundet</small><button class="secondary" onclick="syncCloud()" style="padding:5px 9px;font-size:12px">Synkronisér</button><button class="secondary" onclick="cloudSignOut()" style="padding:5px 9px;font-size:12px">Log konto ud</button></div>
 <div id="pos" class="hidden"><div id="posOrderPanel" class="card hidden"><h2>Ordre fra kvittering</h2><div id="posOrderDetail"></div></div><div class="pos-top"><div class="card pos-products"><h2>🛒 Kasse</h2><div class="row"><input id="scan" placeholder="Scan stregkode eller varenummer" style="flex:1" onkeydown="if(event.key==='Enter')scanItem()"><button onclick="scanItem()">Tilføj</button></div><div id="categoryButtons" class="category-buttons"></div><div id="productButtons" class="product-buttons"></div></div><div class="card pos-cart"><h2>Kurv</h2><div id="cartList"></div><div class="row between"><strong>Total inkl. moms</strong><span class="big" id="cartTotal">0,00 kr.</span></div><div class="row"><button onclick="checkout('Kontant')">Kontant</button><button onclick="checkout('MobilePay')">MobilePay</button><button class="secondary" onclick="clearCart()">Ryd kurv</button></div></div></div><div class="card packages-section"><div class="row between"><h2>📦 Pakker i dag</h2><span class="muted" id="todayDate"></span></div><div id="packageGrid" class="package-layout"></div></div></div>
 <div id="admin" class="hidden"><div class="admin-tabs"><button onclick="adminTab('overview')" data-admin="overview">📊 Overblik</button><button onclick="adminTab('products')" data-admin="products">📦 Varer & lager</button><button onclick="adminTab('orders')" data-admin="orders">🧾 Ordrer & retur</button><button onclick="adminTab('people')" data-admin="people">👥 Medarbejdere</button><button onclick="adminTab('settings')" data-admin="settings">⚙️ Backup</button></div>
 <div data-admin-panel="overview"><div class="card"><h2>Månedens salg</h2><div id="stats"></div></div><div class="card"><h2>📊 Statistik og lageradvarsler</h2><div id="analytics"></div></div></div>
 <div data-admin-panel="products" class="hidden"><div class="card"><h2>Varekategorier</h2><div id="categoryManager"></div><div class="row"><input id="newCategory" placeholder="Ny kategori"><button onclick="addCategory()">Opret kategori</button></div></div><div class="card"><h2>Varekartotek og lager</h2><div id="inventory"></div><h3>Tilføj vare</h3><div class="row"><input id="newName" placeholder="Varenavn"><input id="newCode" placeholder="Stregkode"><input id="newPrice" type="number" min="0" step=".01" placeholder="Pris"><input id="newStock" type="number" min="0" placeholder="Lager"><input id="newCost" type="number" min="0" step=".01" placeholder="Indkøb ekskl. moms"><select id="newProductCategory"></select><label>Produktbillede <input id="newProductImage" type="file" accept="image/*"></label><button onclick="addProduct()">Tilføj</button></div></div></div>
 <div data-admin-panel="orders" class="hidden"><div class="card"><h2>🗓 Månedsarkiv med kvitteringer</h2><p class="muted">Alle salg gemmes i ordrehistorikken. Vælg en måned og åbn en samlet udskriftsvenlig rapport, som kan gemmes som PDF.</p><div class="row"><input id="receiptMonth" type="month"><button onclick="exportMonthReceipts()">Åbn månedens kvitteringer / Gem som PDF</button></div></div><div class="card"><h2>🔎 Find ordre / retur</h2><div class="row"><input id="orderLookup" placeholder="Scan kvitteringens stregkode" style="flex:1" onkeydown="if(event.key==='Enter')openOrder(this.value.trim())"><button onclick="openOrder(el('orderLookup').value.trim())">Find ordre</button></div><div id="orderDetail"></div></div><div class="card"><h2>Seneste salg</h2><div id="sales"></div></div></div>
 <div data-admin-panel="people" class="hidden"><div class="card"><h2>Medarbejdere og profiler</h2><div id="profileManager"></div><h3>Tilføj medarbejder</h3><div class="row"><input id="newEmployeeName" placeholder="Navn"><input id="newEmployeeImage" type="file" accept="image/*"><button onclick="addEmployee()">Tilføj profil</button></div></div><div class="card"><h2>Medarbejderstatistik – denne måned</h2><div id="employeeStats"></div></div></div>
-<div data-admin-panel="settings" class="hidden"><div class="card"><h2>Backup</h2><button onclick="exportData()">Eksporter komplet JSON-backup</button> <label class="importlabel">Importer backup <input id="importBackup" type="file" accept="application/json,.json" onchange="importDataFile(this.files[0])"></label><p class="muted">Data gemmes på denne enhed. Eksportér backup regelmæssigt; cloud-backup er endnu ikke forbundet.</p></div></div></div>
+<div data-admin-panel="settings" class="hidden"><div class="card"><h2>Cloud-lagring</h2><p>Første gang: opret databasetabellen med den medfølgende SQL-fil i Supabase. Når cloud er tom, kan du overføre de nuværende lokale data.</p><button onclick="initializeCloud()">Overfør lokale data til ny cloud</button><button class="secondary" onclick="syncCloud()">Synkronisér nu</button></div><div class="card"><h2>Backup</h2><button onclick="exportData()">Eksporter komplet JSON-backup</button> <label class="importlabel">Importer backup <input id="importBackup" type="file" accept="application/json,.json" onchange="importDataFile(this.files[0])"></label><p class="muted">Cloud-backup er aktiv, når status viser Synkroniseret. Eksportér fortsat backup regelmæssigt.</p></div></div></div>
 </section></main><script>
 const CATS=['GLS ind','GLS ud','GLS anmeldt','GLS retur','DAO ind','DAO ud','AROX'];
 const starter={products:[{id:'1001',name:'Forsendelsespose',price:10,stock:100},{id:'1002',name:'Papkasse',price:25,stock:50},{id:'1003',name:'Tape',price:15,stock:30}],sales:[],packages:{},adjustments:[]};
@@ -25,14 +25,22 @@ if(!Array.isArray(data.employees)){data.employees=structuredClone(defaultProfile
 
 if(!Array.isArray(data.categories))data.categories=['Emballage','Kontorartikler','Andet'];data.products.forEach(p=>{if(!p.category)p.category='Andet'});
 const el=id=>document.getElementById(id), money=n=>Number(n).toLocaleString('da-DK',{style:'currency',currency:'DKK'});
-const save=()=>localStorage.setItem('ost_pos_v1',JSON.stringify(data));
+const save=()=>{localStorage.setItem('ost_pos_v1',JSON.stringify(data));queueCloudSave()};
 const note=t=>{el('notice').textContent=t;};
 function renderLogin(){let root=el('profileTiles');root.replaceChildren();data.employees.filter(p=>p.active!==false).forEach(p=>{let b=document.createElement('button');b.className='profile-tile';let portrait=document.createElement('div');portrait.className='profile-picture';if(p.avatar){let img=document.createElement('img');img.src=p.avatar;img.alt='Tegnet profilbillede';portrait.append(img)}else{portrait.textContent='👤';portrait.classList.add('placeholder')}let name=document.createElement('span');name.textContent=p.name;b.append(portrait,name);b.onclick=()=>loginEmployee(p.id);root.append(b)});}
 function loginEmployee(id){let p=data.employees.find(x=>x.id===id&&x.active!==false);if(!p)return;role='staff';activeEmployeeId=p.id;enterApp(p.name)}
-function showAdminLogin(){el('adminLogin').classList.toggle('hidden');if(!el('adminLogin').classList.contains('hidden'))el('pin').focus()}
-function login(){let p=el('pin').value;if(p!=='9999'){el('loginError').textContent='Forkert PIN';return}el('pin').value='';el('loginError').textContent='';role='admin';activeEmployeeId=null;enterApp('Administrator');tab('admin')}
+async function showAdminLogin(){
+  if(!cloudUser)return;
+  const password=prompt('Indtast din Supabase-adgangskode for at åbne administrationen');
+  if(password===null)return;
+  try{
+    await cloudRequest('/auth/v1/token?grant_type=password',{method:'POST',body:JSON.stringify({email:cloudUser.email,password})});
+    login();
+  }catch{alert('Forkert adgangskode eller loginfejl')}
+}
+function login(){if(!cloudUser)return;role='admin';activeEmployeeId=null;enterApp('Administrator');tab('admin')}
 function enterApp(name){el('loginView').classList.add('hidden');el('app').classList.remove('hidden');el('userChip').classList.remove('hidden');el('userAvatar').src=data.employees.find(p=>p.id===activeEmployeeId)?.avatar||'./icon-192.png';el('navAdmin').classList.toggle('hidden',role!=='admin');el('who').textContent=name;tab('pos')}
-function logout(){role=null;activeEmployeeId=null;cart=[];el('app').classList.add('hidden');el('loginView').classList.remove('hidden');el('adminLogin').classList.add('hidden');el('userChip').classList.add('hidden');el('who').textContent='';note('');renderLogin()}
+function logout(){role=null;activeEmployeeId=null;cart=[];el('app').classList.add('hidden');el('loginView').classList.remove('hidden');el('userChip').classList.add('hidden');el('who').textContent='';note('');renderLogin()}
 function tab(t){if(t==='admin'&&role!=='admin')return;['pos','admin'].forEach(x=>{el(x).classList.toggle('hidden',x!==t);el('nav'+x[0].toUpperCase()+x.slice(1)).classList.toggle('active',x===t)});render()}
 function render(){renderProducts();renderCart();renderPackages();if(role==='admin'){renderAdmin();renderCategories()}}
 function renderProducts(){let cats=el('categoryButtons');cats.replaceChildren();['Alle',...data.categories].forEach(c=>{let b=document.createElement('button');b.textContent=c;b.className=c===selectedCategory?'selected':'';b.onclick=()=>{selectedCategory=c;renderProducts()};cats.append(b)});let items=data.products.filter(p=>selectedCategory==='Alle'||p.category===selectedCategory);el('productButtons').replaceChildren(...items.map(p=>{let b=document.createElement('button');b.className='secondary';if(p.image){let img=document.createElement('img');img.src=p.image;img.alt='';b.append(img)}let label=document.createElement('span');label.textContent=p.name;let price=document.createElement('strong');price.textContent=money(p.price);b.append(label,price);b.onclick=()=>addCart(p.id);return b}))}
@@ -68,5 +76,97 @@ function renderCategories(){let root=el('categoryManager');root.replaceChildren(
 function addCategory(){let c=el('newCategory').value.trim();if(!c||data.categories.some(x=>x.toLowerCase()===c.toLowerCase())){note('Vælg et nyt kategorinavn');return}data.categories.push(c);el('newCategory').value='';save();renderCategories();renderProducts()}
 async function addProduct(){let name=el('newName').value.trim(),id=el('newCode').value.trim(),price=Number(el('newPrice').value),stock=Number(el('newStock').value);if(!name||!id||data.products.some(p=>p.id===id)||!Number.isFinite(price)||price<0||!Number.isSafeInteger(stock)||stock<0){note('Udfyld gyldige vareoplysninger og unik stregkode');return}let image='';try{if(el('newProductImage').files?.[0])image=await readAvatar(el('newProductImage').files[0])}catch{note('Billedet kunne ikke gemmes');return}data.products.push({id,name,price,stock,cost:Math.max(0,Number(el('newCost').value)||0),category:el('newProductCategory').value||'Andet',image});el('newProductImage').value='';save();['newName','newCode','newPrice','newStock','newCost'].forEach(id=>el(id).value='');render()}
 function exportData(){let blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='ostergades-pos-backup-'+key()+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
-renderLogin();
+
+const SUPABASE_URL='https://paqeijcqyjvcsehnxzww.supabase.co';
+const SUPABASE_KEY='sb_publishable_lPrumhqAUJlWsivvbD-DPA_764Ss3uP';
+let cloudUser=null,cloudToken=null,cloudRefresh=null,cloudRevision=null,cloudDirty=false,cloudBusy=false,cloudTimer=null;
+const cloudStateKey='ost_pos_cloud_auth';
+function cloudStatus(t){const n=el('cloudStatus');if(n)n.textContent='Cloud: '+t}
+function queueCloudSave(){
+  if(!cloudUser)return;
+  cloudDirty=true;cloudStatus('Afventer synkronisering');
+  clearTimeout(cloudTimer);cloudTimer=setTimeout(()=>syncCloud(),1800);
+}
+async function cloudRequest(path,options={}){
+  const headers={'apikey':SUPABASE_KEY,'Content-Type':'application/json',...(cloudToken?{'Authorization':'Bearer '+cloudToken}:{}) ,...(options.headers||{})};
+  const response=await fetch(SUPABASE_URL+path,{...options,headers});
+  const raw=await response.text();let result;
+  try{result=raw?JSON.parse(raw):null}catch{result=raw}
+  if(!response.ok)throw Error(result?.message||result?.error_description||result?.error||('HTTP '+response.status));
+  return result;
+}
+async function acceptCloudSession(session){
+  cloudToken=session.access_token;cloudRefresh=session.refresh_token;cloudUser=session.user;
+  localStorage.setItem(cloudStateKey,JSON.stringify({access_token:cloudToken,refresh_token:cloudRefresh,user:cloudUser}));
+  el('cloudLogin').classList.add('hidden');el('loginView').classList.remove('hidden');
+  await loadCloud();renderLogin();
+}
+async function cloudSignIn(){
+  const email=el('cloudEmail').value.trim(),password=el('cloudPassword').value;
+  el('cloudError').textContent='Logger ind…';
+  try{
+    const session=await cloudRequest('/auth/v1/token?grant_type=password',{method:'POST',body:JSON.stringify({email,password})});
+    el('cloudPassword').value='';
+    await acceptCloudSession(session);
+    el('cloudError').textContent='';
+  }catch(e){el('cloudError').textContent='Login mislykkedes: '+e.message}
+}
+async function cloudSignOut(){
+  if(cloudDirty&&!confirm('Der er ændringer, som endnu ikke er gemt i skyen. Vil du logge ud alligevel?'))return;
+  try{await cloudRequest('/auth/v1/logout',{method:'POST'})}catch{}
+  cloudUser=null;cloudToken=null;cloudRefresh=null;cloudRevision=null;
+  localStorage.removeItem(cloudStateKey);logout();
+  el('loginView').classList.add('hidden');el('cloudLogin').classList.remove('hidden');
+}
+async function loadCloud(){
+  cloudStatus('Henter data');
+  try{
+    const rows=await cloudRequest('/rest/v1/pos_state?select=payload,revision&limit=1');
+    if(rows.length){
+      if(cloudDirty){cloudStatus('Lokale ændringer afventer; clouddata er ikke overskrevet');return}
+      const payload=rows[0].payload;
+      if(!payload||!Array.isArray(payload.products)||!Array.isArray(payload.sales))throw Error('Ugyldigt cloudformat');
+      data=payload;cloudRevision=rows[0].revision;
+      if(!Array.isArray(data.employees))data.employees=structuredClone(defaultProfiles);
+      if(!Array.isArray(data.categories))data.categories=['Emballage','Kontorartikler','Andet'];
+      localStorage.setItem('ost_pos_v1',JSON.stringify(data));
+      cloudStatus('Synkroniseret');
+    }else{
+      cloudRevision=0;
+      // Never silently upload a previous device's local data to a newly logged-in account.
+      cloudStatus('Ny cloudkonto – vælg initialisering i administration');
+    }
+  }catch(e){cloudStatus('Fejl: '+e.message)}
+}
+async function syncCloud(){
+  if(!cloudUser||cloudBusy)return;
+  cloudBusy=true;
+  try{
+    if(!cloudDirty){await loadCloud();return}
+    if(cloudRevision===null){cloudStatus('Kan ikke gemme før cloud er indlæst');return}
+    const payload=structuredClone(data),expected=cloudRevision;
+    const result=await cloudRequest('/rest/v1/rpc/pos_save_state',{method:'POST',body:JSON.stringify({expected_revision:expected,new_payload:payload})});
+    if(result===null||result===undefined)throw Error('Ingen svar fra databasen');
+    if(result===-1){cloudStatus('Konflikt: data ændret på en anden enhed. Eksportér backup før du fortsætter');return}
+    cloudRevision=Number(result);
+    if(JSON.stringify(data)===JSON.stringify(payload)){cloudDirty=false;cloudStatus('Synkroniseret')}else{cloudStatus('Nye ændringer afventer');queueCloudSave()}
+  }catch(e){cloudStatus('Ikke synkroniseret: '+e.message)}
+  finally{cloudBusy=false}
+}
+async function initializeCloud(){
+  if(!cloudUser||cloudRevision!==0)return;
+  if(!confirm('Gem de aktuelle lokale POS-data i denne Supabase-konto? Kontrollér at du er logget ind på den rigtige konto.'))return;
+  cloudDirty=true;await syncCloud();
+}
+async function resumeCloud(){
+  try{
+    const stored=JSON.parse(localStorage.getItem(cloudStateKey)||'null');if(!stored?.refresh_token)return;
+    const session=await cloudRequest('/auth/v1/token?grant_type=refresh_token',{method:'POST',body:JSON.stringify({refresh_token:stored.refresh_token})});
+    await acceptCloudSession(session);
+  }catch(e){localStorage.removeItem(cloudStateKey);el('cloudError').textContent='Log ind igen for at fortsætte'}
+}
+setInterval(()=>{if(cloudUser)syncCloud()},60000);
+window.addEventListener('online',()=>{if(cloudUser)syncCloud()});
+
+renderLogin();resumeCloud();
 if ('serviceWorker' in navigator && location.protocol==='https:') navigator.serviceWorker.register('./sw.js').catch(()=>{});</script></body></html>
