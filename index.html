@@ -14,7 +14,7 @@
 <div data-admin-panel="products" class="hidden"><div class="card"><h2>Varekategorier</h2><div id="categoryManager"></div><div class="row"><input id="newCategory" placeholder="Ny kategori"><button onclick="addCategory()">Opret kategori</button></div></div><div class="card"><h2>Varekartotek og lager</h2><div id="inventory"></div><h3>Tilføj vare</h3><div class="row"><input id="newName" placeholder="Varenavn"><input id="newCode" placeholder="Stregkode"><input id="newPrice" type="number" min="0" step=".01" placeholder="Pris"><input id="newStock" type="number" min="0" placeholder="Lager"><input id="newCost" type="number" min="0" step=".01" placeholder="Indkøb ekskl. moms"><select id="newProductCategory"></select><label>Produktbillede <input id="newProductImage" type="file" accept="image/*"></label><button onclick="addProduct()">Tilføj</button></div></div></div>
 <div data-admin-panel="orders" class="hidden"><div class="card"><h2>🗓 Månedsarkiv med kvitteringer</h2><p class="muted">Alle salg gemmes i ordrehistorikken. Vælg en måned og åbn en samlet udskriftsvenlig rapport, som kan gemmes som PDF.</p><div class="row"><input id="receiptMonth" type="month"><button onclick="exportMonthReceipts()">Åbn månedens kvitteringer / Gem som PDF</button></div></div><div class="card"><h2>🔎 Find ordre / retur</h2><div class="row"><input id="orderLookup" placeholder="Scan kvitteringens stregkode" style="flex:1" onkeydown="if(event.key==='Enter')openOrder(this.value.trim())"><button onclick="openOrder(el('orderLookup').value.trim())">Find ordre</button></div><div id="orderDetail"></div></div><div class="card"><h2>Seneste salg</h2><div id="sales"></div></div></div>
 <div data-admin-panel="people" class="hidden"><div class="card"><h2>Medarbejdere og profiler</h2><div id="profileManager"></div><h3>Tilføj medarbejder</h3><div class="row"><input id="newEmployeeName" placeholder="Navn"><input id="newEmployeeImage" type="file" accept="image/*"><button onclick="addEmployee()">Tilføj profil</button></div></div><div class="card"><h2>Medarbejderstatistik – denne måned</h2><div id="employeeStats"></div></div></div>
-<div data-admin-panel="settings" class="hidden"><div class="card"><h2>Cloud-lagring</h2><p>Første gang: opret databasetabellen med den medfølgende SQL-fil i Supabase. Når cloud er tom, kan du overføre de nuværende lokale data.</p><button onclick="initializeCloud()">Overfør lokale data til ny cloud</button><button class="secondary" onclick="syncCloud()">Synkronisér nu</button><button class="secondary" onclick="syncTracker(true)">Send pakketal til PakkeTracker nu</button><p class="muted">POS styrer pakketal fra den dag, denne version tages i brug. Tidligere måneder ændres ikke automatisk. Hvis PakkeTracker har en samlet månedstotal, bliver den ikke overskrevet; du får en advarsel.</p></div><div class="card"><h2>Backup</h2><button onclick="exportData()">Eksporter komplet JSON-backup</button> <label class="importlabel">Importer backup <input id="importBackup" type="file" accept="application/json,.json" onchange="importDataFile(this.files[0])"></label><p class="muted">Cloud-backup er aktiv, når status viser Synkroniseret. Eksportér fortsat backup regelmæssigt.</p></div></div></div>
+<div data-admin-panel="settings" class="hidden"><div class="card"><h2>Cloud-lagring</h2><p>Første gang: opret databasetabellen med den medfølgende SQL-fil i Supabase. Når cloud er tom, kan du overføre de nuværende lokale data.</p><button onclick="initializeCloud()">Overfør lokale data til ny cloud</button><button class="secondary" onclick="syncCloud()">Synkronisér nu</button><button class="secondary" onclick="syncTracker(true)">Send pakketal til PakkeTracker nu</button><p class="muted">POS styrer pakketal fra den dag, denne version tages i brug. Tidligere måneder ændres ikke automatisk. Tomme månedstotaler uden registreringer ryddes automatisk, så dagstal kan bruges. Månedstotaler med data bliver aldrig slettet eller overskrevet automatisk.</p></div><div class="card"><h2>Backup</h2><button onclick="exportData()">Eksporter komplet JSON-backup</button> <label class="importlabel">Importer backup <input id="importBackup" type="file" accept="application/json,.json" onchange="importDataFile(this.files[0])"></label><p class="muted">Cloud-backup er aktiv, når status viser Synkroniseret. Eksportér fortsat backup regelmæssigt.</p></div></div></div>
 </section></main><script>
 const CATS=['GLS ind','GLS ud','GLS anmeldt','GLS retur','DAO ind','DAO ud','AROX'];
 const starter={products:[{id:'1001',name:'Forsendelsespose',price:10,stock:100},{id:'1002',name:'Papkasse',price:25,stock:50},{id:'1003',name:'Tape',price:15,stock:30}],sales:[],packages:{},adjustments:[]};
@@ -189,13 +189,35 @@ async function syncTracker(manual=false){
     const signature=JSON.stringify(dates.map(d=>[d,...Object.keys(TRACKER_MAP).map(k=>data.packages[d]?.[k]??null)]));
     if(!manual&&signature===trackerLastSignature){trackerStatus('synkroniseret');return}
     const months=[...new Set(dates.map(d=>d.slice(0,7)))];
-    const monthly=await cloudRequest('/rest/v1/monthly_totals?select=month_key&user_id=eq.'+encodeURIComponent(cloudUser.id)+'&month_key=in.('+months.join(',')+')');
-    const blocked=new Set(monthly.map(x=>x.month_key));
+    // PakkeTracker uses monthly_totals in preference to daily_records even when
+    // the monthly row contains no entered counts. Remove ONLY truly empty rows.
+    const monthly=await cloudRequest('/rest/v1/monthly_totals?select=*&user_id=eq.'+encodeURIComponent(cloudUser.id)+'&month_key=in.('+months.join(',')+')');
+    const blocked=new Map();const clearedMonths=[];const protectedMonths=[];
+    const packageFields=['gls_in','gls_out','gls_notice','gls_return','dao_in','dao_out','arox'];
+    const metadataFields=new Set(['user_id','month_key','id','created_at','updated_at']);
+    for(const record of monthly){
+      // A recorded zero is a real registration, not an empty field.
+      const registered=packageFields.some(k=>record[k]!==null&&record[k]!==undefined);
+      // Never remove a monthly record with any other meaningful information.
+      const otherData=Object.entries(record).some(([k,v])=>!metadataFields.has(k)&&!packageFields.includes(k)&&v!==null&&v!==undefined&&v!==''&&v!==0&&v!=='0');
+      if(registered||otherData){
+        blocked.set(record.month_key,registered?'pakketal registreret':'andre månedstal registreret');
+        protectedMonths.push(record.month_key);
+        continue;
+      }
+      // This is a completely empty month. Delete it only for the logged-in owner,
+      // then verify it no longer exists before writing any daily figures.
+      await cloudRequest('/rest/v1/monthly_totals?user_id=eq.'+encodeURIComponent(cloudUser.id)+'&month_key=eq.'+record.month_key,
+        {method:'DELETE',headers:{Prefer:'return=minimal'}});
+      const verify=await cloudRequest('/rest/v1/monthly_totals?select=month_key&user_id=eq.'+encodeURIComponent(cloudUser.id)+'&month_key=eq.'+record.month_key);
+      if(verify.length){blocked.set(record.month_key,'tom månedstotal kunne ikke ryddes');continue}
+      clearedMonths.push(record.month_key);
+    }
     const existing=await cloudRequest('/rest/v1/daily_records?select=record_date,gls_in,gls_out,gls_notice,gls_return,dao_in,dao_out,arox&user_id=eq.'+encodeURIComponent(cloudUser.id)+'&record_date=gte.'+activation+'&record_date=lte.'+key()+'&limit=1000');
     const byDate=new Map(existing.map(r=>[r.record_date,r]));
     let updated=0,skipped=0;const sentDates=[],blockedDates=[],unchangedDates=[];
     for(const day of dates){
-      if(blocked.has(day.slice(0,7))){skipped++;blockedDates.push(day);continue}
+      if(blocked.has(day.slice(0,7))){skipped++;blockedDates.push(day+' ('+blocked.get(day.slice(0,7))+')');continue}
       const source=data.packages[day]||{},previous=byDate.get(day);
       // Never turn an unentered POS field into zero in PakkeTracker.
       const fields={};
@@ -213,7 +235,7 @@ async function syncTracker(manual=false){
       }
       updated++;sentDates.push(day);
     }
-    trackerDates('Sendt/opdateret: '+(sentDates.join(', ')||'ingen')+'\nAllerede ens: '+(unchangedDates.join(', ')||'ingen')+'\nBlokeret af månedstotal: '+(blockedDates.join(', ')||'ingen')+'\nAktiv fra: '+activation+' · I alt '+dates.length+' POS-datoer kontrolleret.');
+    trackerDates('Sendt/opdateret: '+(sentDates.join(', ')||'ingen')+'\nAllerede ens: '+(unchangedDates.join(', ')||'ingen')+'\nTomme månedstotaler ryddet: '+(clearedMonths.join(', ')||'ingen')+'\nBeskyttede månedstotaler: '+(protectedMonths.join(', ')||'ingen')+'\nBlokeret: '+(blockedDates.join(', ')||'ingen')+'\nAktiv fra: '+activation+' · I alt '+dates.length+' POS-datoer kontrolleret.');
     if(skipped){trackerStatus('advarsel: '+skipped+' dage blokeret ('+blockedDates.join(', ')+') – ikke overskrevet');return}
     trackerLastSignature=signature;
     trackerStatus('synkroniseret · '+new Date().toLocaleTimeString('da-DK',{hour:'2-digit',minute:'2-digit'})+(updated?' · '+updated+' dage opdateret':''));
