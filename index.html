@@ -5,16 +5,16 @@
 /* POS v1.5 touch layout */
 #userChip{display:flex;align-items:center;gap:9px;padding:5px 12px 5px 5px}#userAvatar{width:44px;height:44px;border-radius:50%;object-fit:cover;background:#3088c4}#userChip span{font-weight:700}.pos-top{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(300px,1fr);gap:10px}.pos-top .card{margin-bottom:8px}.pos-top h2,.packages-section h2{margin:0 0 9px;font-size:19px}.pos-products,.pos-cart{padding:12px}.category-buttons{display:flex;gap:7px;overflow-x:auto;padding:8px 0}.category-buttons button{white-space:nowrap;min-height:43px;padding:9px 13px;background:#29405a}.category-buttons button.selected{background:#f3c932;color:#102238}.product-buttons{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:7px;max-height:230px;overflow:auto}.product-buttons button{display:flex;flex-direction:column;align-items:center;gap:5px;padding:7px;min-height:92px;font-size:13px}.product-buttons img{width:62px;height:54px;object-fit:cover;border-radius:7px}.pos-cart #cartList{max-height:220px;overflow:auto}.pos-cart .row button{flex:1;padding:9px}.packages-section{padding:12px}.package-layout{display:grid;grid-template-columns:1fr 1fr;gap:12px}.package-layout .dao-card{grid-column:1;grid-row:1}.package-other{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;grid-column:2;grid-row:1}.package-other .card{padding:8px;margin:0}.package-other label{margin:0 0 4px;font-size:12px}.package-other input{font-size:19px;padding:8px;width:100%}.package-layout .dao-plus{min-height:92px}.package-layout .dao-card{margin:0;padding:12px}.package-layout .dao-card h2{margin:0}.admin-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}.admin-tabs button{background:#293e57}.admin-tabs button.selected{background:#f3c932;color:#102238}.product-admin-img{width:52px;height:52px;object-fit:cover;border-radius:8px}.item select{max-width:180px}.item input[type=file]{max-width:160px;font-size:11px}@media(min-width:1050px){main{max-width:1700px;padding:10px 16px}.nav{margin-bottom:8px}header{padding:7px 18px}.card{margin-bottom:8px}}@media(max-width:900px){.pos-top{grid-template-columns:1fr}.package-layout{grid-template-columns:1fr}.package-layout .dao-card,.package-other{grid-column:1;grid-row:auto}}@media(max-width:560px){.package-other{grid-template-columns:repeat(2,minmax(0,1fr))}.product-buttons{grid-template-columns:repeat(2,1fr)}}
 .brandline{display:flex;align-items:center;gap:12px}.brandline img{height:52px;max-width:160px;object-fit:contain}.importlabel{display:inline-flex;align-items:center;gap:6px;background:#29405a;border-radius:8px;padding:10px;cursor:pointer}.importlabel input{max-width:180px}.month-receipt{page-break-after:always;border-bottom:1px dashed #aaa;padding:14px 0;color:#111}.month-receipt:last-child{page-break-after:auto}@media print{.month-receipt{break-after:page}}
-</style></head><body><header><div><div class="brandline"><img src="./logo-header.png" alt="Østergades Pakkeshop"><h1>Østergades POS</h1></div><small>v1.7.1</small></div><div class="row"><button id="userChip" class="secondary hidden" onclick="logout()" title="Tryk for at logge ud"><img id="userAvatar" src="./icon-192.png" alt="Aktiv medarbejder"><span id="who"></span><span aria-hidden="true">↪</span></button></div></header><main>
+</style></head><body><header><div><div class="brandline"><img src="./logo-header.png" alt="Østergades Pakkeshop"><h1>Østergades POS</h1></div><small>v1.8</small></div><div class="row"><button id="userChip" class="secondary hidden" onclick="logout()" title="Tryk for at logge ud"><img id="userAvatar" src="./icon-192.png" alt="Aktiv medarbejder"><span id="who"></span><span aria-hidden="true">↪</span></button></div></header><main>
 <section id="cloudLogin" class="login-stage"><h2>Log ind på Østergades POS</h2><p class="muted">Brug din eksisterende PakkeTracker-konto</p><div class="card" style="max-width:440px;margin:18px auto;text-align:left"><label>E-mail</label><input id="cloudEmail" type="email" autocomplete="username" placeholder="Din e-mail"><label>Adgangskode</label><input id="cloudPassword" type="password" autocomplete="current-password" placeholder="Adgangskode" onkeydown="if(event.key==='Enter')cloudSignIn()"><button style="width:100%;margin-top:12px" onclick="cloudSignIn()">Log ind</button><p id="cloudError" class="muted" role="status"></p></div></section><section id="loginView" class="login-stage hidden" class="login-stage"><h2>Hvem arbejder i dag?</h2><p class="muted">Tryk på din profil for at åbne kassen</p><div id="profileTiles" class="profile-grid"></div><div class="row" style="justify-content:center;margin-top:24px"><button class="admin-entry" onclick="showAdminLogin()">⚙ Administration</button></div></section>
-<section id="app" class="hidden"><div class="nav"><button id="navPos" onclick="tab('pos')">🛒 Kasse</button><button id="navAdmin" class="hidden" onclick="tab('admin')">⚙️ Administrator</button></div><div id="notice"></div><div class="row" style="justify-content:flex-end"><small id="cloudStatus" class="muted">Cloud: ikke forbundet</small><button class="secondary" onclick="syncCloud()" style="padding:5px 9px;font-size:12px">Synkronisér</button><button class="secondary" onclick="cloudSignOut()" style="padding:5px 9px;font-size:12px">Log konto ud</button></div>
+<section id="app" class="hidden"><div class="nav"><button id="navPos" onclick="tab('pos')">🛒 Kasse</button><button id="navAdmin" class="hidden" onclick="tab('admin')">⚙️ Administrator</button></div><div id="notice"></div><div class="row" style="justify-content:flex-end"><small id="cloudStatus" class="muted">Cloud: ikke forbundet</small><small id="trackerStatus" class="muted" style="margin-left:12px">PakkeTracker: afventer login</small><button class="secondary" onclick="syncCloud()" style="padding:5px 9px;font-size:12px">Synkronisér</button><button class="secondary" onclick="cloudSignOut()" style="padding:5px 9px;font-size:12px">Log konto ud</button></div>
 <div id="pos" class="hidden"><div id="posOrderPanel" class="card hidden"><h2>Ordre fra kvittering</h2><div id="posOrderDetail"></div></div><div class="pos-top"><div class="card pos-products"><h2>🛒 Kasse</h2><div class="row"><input id="scan" placeholder="Scan stregkode eller varenummer" style="flex:1" onkeydown="if(event.key==='Enter')scanItem()"><button onclick="scanItem()">Tilføj</button></div><div id="categoryButtons" class="category-buttons"></div><div id="productButtons" class="product-buttons"></div></div><div class="card pos-cart"><h2>Kurv</h2><div id="cartList"></div><div class="row between"><strong>Total inkl. moms</strong><span class="big" id="cartTotal">0,00 kr.</span></div><div class="row"><button onclick="checkout('Kontant')">Kontant</button><button onclick="checkout('MobilePay')">MobilePay</button><button class="secondary" onclick="clearCart()">Ryd kurv</button></div></div></div><div class="card packages-section"><div class="row between"><h2>📦 Pakker i dag</h2><span class="muted" id="todayDate"></span></div><div id="packageGrid" class="package-layout"></div></div></div>
 <div id="admin" class="hidden"><div class="admin-tabs"><button onclick="adminTab('overview')" data-admin="overview">📊 Overblik</button><button onclick="adminTab('products')" data-admin="products">📦 Varer & lager</button><button onclick="adminTab('orders')" data-admin="orders">🧾 Ordrer & retur</button><button onclick="adminTab('people')" data-admin="people">👥 Medarbejdere</button><button onclick="adminTab('settings')" data-admin="settings">⚙️ Backup</button></div>
 <div data-admin-panel="overview"><div class="card"><h2>Månedens salg</h2><div id="stats"></div></div><div class="card"><h2>📊 Statistik og lageradvarsler</h2><div id="analytics"></div></div></div>
 <div data-admin-panel="products" class="hidden"><div class="card"><h2>Varekategorier</h2><div id="categoryManager"></div><div class="row"><input id="newCategory" placeholder="Ny kategori"><button onclick="addCategory()">Opret kategori</button></div></div><div class="card"><h2>Varekartotek og lager</h2><div id="inventory"></div><h3>Tilføj vare</h3><div class="row"><input id="newName" placeholder="Varenavn"><input id="newCode" placeholder="Stregkode"><input id="newPrice" type="number" min="0" step=".01" placeholder="Pris"><input id="newStock" type="number" min="0" placeholder="Lager"><input id="newCost" type="number" min="0" step=".01" placeholder="Indkøb ekskl. moms"><select id="newProductCategory"></select><label>Produktbillede <input id="newProductImage" type="file" accept="image/*"></label><button onclick="addProduct()">Tilføj</button></div></div></div>
 <div data-admin-panel="orders" class="hidden"><div class="card"><h2>🗓 Månedsarkiv med kvitteringer</h2><p class="muted">Alle salg gemmes i ordrehistorikken. Vælg en måned og åbn en samlet udskriftsvenlig rapport, som kan gemmes som PDF.</p><div class="row"><input id="receiptMonth" type="month"><button onclick="exportMonthReceipts()">Åbn månedens kvitteringer / Gem som PDF</button></div></div><div class="card"><h2>🔎 Find ordre / retur</h2><div class="row"><input id="orderLookup" placeholder="Scan kvitteringens stregkode" style="flex:1" onkeydown="if(event.key==='Enter')openOrder(this.value.trim())"><button onclick="openOrder(el('orderLookup').value.trim())">Find ordre</button></div><div id="orderDetail"></div></div><div class="card"><h2>Seneste salg</h2><div id="sales"></div></div></div>
 <div data-admin-panel="people" class="hidden"><div class="card"><h2>Medarbejdere og profiler</h2><div id="profileManager"></div><h3>Tilføj medarbejder</h3><div class="row"><input id="newEmployeeName" placeholder="Navn"><input id="newEmployeeImage" type="file" accept="image/*"><button onclick="addEmployee()">Tilføj profil</button></div></div><div class="card"><h2>Medarbejderstatistik – denne måned</h2><div id="employeeStats"></div></div></div>
-<div data-admin-panel="settings" class="hidden"><div class="card"><h2>Cloud-lagring</h2><p>Første gang: opret databasetabellen med den medfølgende SQL-fil i Supabase. Når cloud er tom, kan du overføre de nuværende lokale data.</p><button onclick="initializeCloud()">Overfør lokale data til ny cloud</button><button class="secondary" onclick="syncCloud()">Synkronisér nu</button></div><div class="card"><h2>Backup</h2><button onclick="exportData()">Eksporter komplet JSON-backup</button> <label class="importlabel">Importer backup <input id="importBackup" type="file" accept="application/json,.json" onchange="importDataFile(this.files[0])"></label><p class="muted">Cloud-backup er aktiv, når status viser Synkroniseret. Eksportér fortsat backup regelmæssigt.</p></div></div></div>
+<div data-admin-panel="settings" class="hidden"><div class="card"><h2>Cloud-lagring</h2><p>Første gang: opret databasetabellen med den medfølgende SQL-fil i Supabase. Når cloud er tom, kan du overføre de nuværende lokale data.</p><button onclick="initializeCloud()">Overfør lokale data til ny cloud</button><button class="secondary" onclick="syncCloud()">Synkronisér nu</button><button class="secondary" onclick="syncTracker(true)">Send pakketal til PakkeTracker nu</button><p class="muted">POS styrer pakketal fra den dag, denne version tages i brug. Tidligere måneder ændres ikke automatisk. Hvis PakkeTracker har en samlet månedstotal, bliver den ikke overskrevet; du får en advarsel.</p></div><div class="card"><h2>Backup</h2><button onclick="exportData()">Eksporter komplet JSON-backup</button> <label class="importlabel">Importer backup <input id="importBackup" type="file" accept="application/json,.json" onchange="importDataFile(this.files[0])"></label><p class="muted">Cloud-backup er aktiv, når status viser Synkroniseret. Eksportér fortsat backup regelmæssigt.</p></div></div></div>
 </section></main><script>
 const CATS=['GLS ind','GLS ud','GLS anmeldt','GLS retur','DAO ind','DAO ud','AROX'];
 const starter={products:[{id:'1001',name:'Forsendelsespose',price:10,stock:100},{id:'1002',name:'Papkasse',price:25,stock:50},{id:'1003',name:'Tape',price:15,stock:30}],sales:[],packages:{},adjustments:[]};
@@ -92,6 +92,7 @@ async function acceptCloudSession(session){
   localStorage.setItem(cloudStateKey,JSON.stringify({access_token:cloudToken,refresh_token:cloudRefresh,user:cloudUser}));
   el('cloudLogin').classList.add('hidden');el('loginView').classList.remove('hidden');
   await loadCloud();renderLogin();
+  if(cloudRevision!==null&&cloudRevision>0)await syncTracker(false);
 }
 async function cloudSignIn(){
   const email=el('cloudEmail').value.trim(),password=el('cloudPassword').value;
@@ -106,7 +107,7 @@ async function cloudSignIn(){
 async function cloudSignOut(){
   if(cloudDirty&&!confirm('Der er ændringer, som endnu ikke er gemt i skyen. Vil du logge ud alligevel?'))return;
   try{await cloudRequest('/auth/v1/logout',{method:'POST'})}catch{}
-  cloudUser=null;cloudToken=null;cloudRefresh=null;cloudRevision=null;
+  cloudUser=null;cloudToken=null;cloudRefresh=null;cloudRevision=null;trackerLastSignature=null;
   localStorage.removeItem(cloudStateKey);logout();
   el('loginView').classList.add('hidden');el('cloudLogin').classList.remove('hidden');
 }
@@ -141,7 +142,7 @@ async function syncCloud(){
     if(result===null||result===undefined)throw Error('Ingen svar fra databasen');
     if(result===-1){cloudStatus('Konflikt: data ændret på en anden enhed. Eksportér backup før du fortsætter');return}
     cloudRevision=Number(result);
-    if(JSON.stringify(data)===JSON.stringify(payload)){cloudDirty=false;cloudStatus('Synkroniseret')}else{cloudStatus('Nye ændringer afventer');queueCloudSave()}
+    if(JSON.stringify(data)===JSON.stringify(payload)){cloudDirty=false;cloudStatus('Synkroniseret');setTimeout(()=>syncTracker(false),0)}else{cloudStatus('Nye ændringer afventer');queueCloudSave()}
   }catch(e){cloudStatus('Ikke synkroniseret: '+e.message)}
   finally{cloudBusy=false}
 }
@@ -157,8 +158,63 @@ async function resumeCloud(){
     await acceptCloudSession(session);
   }catch(e){localStorage.removeItem(cloudStateKey);el('cloudError').textContent='Log ind igen for at fortsætte'}
 }
-setInterval(()=>{if(cloudUser)syncCloud()},60000);
-window.addEventListener('online',()=>{if(cloudUser)syncCloud()});
+setInterval(()=>{if(cloudUser){syncCloud();syncTracker(false)}},15*60*1000);
+window.addEventListener('online',()=>{if(cloudUser){syncCloud();syncTracker(false)}});
+
+
+// PakkeTracker bridge: POS is authoritative for parcel counts, not for shop sales or rates.
+const TRACKER_MAP={'GLS ind':'gls_in','GLS ud':'gls_out','GLS anmeldt':'gls_notice','GLS retur':'gls_return','DAO ind':'dao_in','DAO ud':'dao_out','AROX':'arox'};
+const trackerActivationKey='ost_pos_tracker_activation_v1';
+let trackerBusy=false,trackerLastSignature=null;
+function trackerStatus(message){const n=el('trackerStatus');if(n)n.textContent='PakkeTracker: '+message}
+function trackerActivation(){
+  // The activation date is local to this browser, but subsequent sessions read it back.
+  let day=localStorage.getItem(trackerActivationKey);
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(day||'')){day=key();localStorage.setItem(trackerActivationKey,day)}
+  return day;
+}
+async function syncTracker(manual=false){
+  if(trackerBusy||!cloudUser)return;
+  if(cloudDirty||cloudBusy){trackerStatus('venter på POS-cloud');return}
+  if(!cloudToken){trackerStatus('login mangler');return}
+  trackerBusy=true;
+  try{
+    const activation=trackerActivation();
+    const dates=Object.keys(data.packages||{}).filter(d=>/^\d{4}-\d{2}-\d{2}$/.test(d)&&d>=activation&&d<=key()).sort();
+    if(!dates.length){trackerStatus('ingen nye pakkedage siden '+activation);return}
+    const signature=JSON.stringify(dates.map(d=>[d,...Object.keys(TRACKER_MAP).map(k=>data.packages[d]?.[k]??null)]));
+    if(!manual&&signature===trackerLastSignature){trackerStatus('synkroniseret');return}
+    const months=[...new Set(dates.map(d=>d.slice(0,7)))];
+    const monthly=await cloudRequest('/rest/v1/monthly_totals?select=month_key&user_id=eq.'+encodeURIComponent(cloudUser.id)+'&month_key=in.('+months.join(',')+')');
+    const blocked=new Set(monthly.map(x=>x.month_key));
+    const existing=await cloudRequest('/rest/v1/daily_records?select=record_date,gls_in,gls_out,gls_notice,gls_return,dao_in,dao_out,arox&user_id=eq.'+encodeURIComponent(cloudUser.id)+'&record_date=gte.'+activation+'&record_date=lte.'+key()+'&limit=1000');
+    const byDate=new Map(existing.map(r=>[r.record_date,r]));
+    let updated=0,skipped=0;
+    for(const day of dates){
+      if(blocked.has(day.slice(0,7))){skipped++;continue}
+      const source=data.packages[day]||{},previous=byDate.get(day);
+      // Never turn an unentered POS field into zero in PakkeTracker.
+      const fields={};
+      for(const [posField,dbField] of Object.entries(TRACKER_MAP)){
+        if(!Object.hasOwn(source,posField))continue;
+        const n=source[posField];
+        if(!Number.isSafeInteger(n)||n<0)throw Error('Ugyldigt pakketal '+day+' '+posField);
+        if(!previous||Number(previous[dbField])!==n)fields[dbField]=n;
+      }
+      if(!Object.keys(fields).length)continue;
+      if(previous){
+        await cloudRequest('/rest/v1/daily_records?user_id=eq.'+encodeURIComponent(cloudUser.id)+'&record_date=eq.'+day,{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify(fields)});
+      }else{
+        await cloudRequest('/rest/v1/daily_records',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify({user_id:cloudUser.id,record_date:day,...fields})});
+      }
+      updated++;
+    }
+    if(skipped){trackerStatus('advarsel: '+skipped+' dage ligger i månedstotal – ikke overskrevet');return}
+    trackerLastSignature=signature;
+    trackerStatus('synkroniseret · '+new Date().toLocaleTimeString('da-DK',{hour:'2-digit',minute:'2-digit'})+(updated?' · '+updated+' dage opdateret':''));
+  }catch(e){trackerStatus('FEJL – '+e.message)}
+  finally{trackerBusy=false}
+}
 
 renderLogin();resumeCloud();
 if ('serviceWorker' in navigator && location.protocol==='https:') navigator.serviceWorker.register('./sw.js').catch(()=>{});</script></body></html>
