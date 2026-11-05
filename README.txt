@@ -1,15 +1,8 @@
-Østergades POS v1.2 – GitHub Pages / PWA TESTVERSION
+Østergades POS v1.3 – testversion til GitHub Pages
 
-Upload ALLE filer fra ZIP til roden af dit GitHub-repository.
-GitHub → Settings → Pages → Deploy from a branch → main → /(root).
-Installer fra Edge via menuen Apps → Installer dette websted som en app.
+NYT: Tegnede profilkort, ét tryk for medarbejderlogin, gæsteprofil, tilføj/deaktiver/rediger medarbejdere, upload profilbilleder, medarbejderstatistik pr. måned.
+Administrator: tryk Administration og brug TEST-PIN 9999.
+Upload alle filerne til samme GitHub-repository (root) og overskriv tidligere version.
 
-Demo-PIN: medarbejder 1234, administrator 9999.
-Forsiden indeholder kasse og alle pakkefelter. GLS/DAO ud/AROX er hele dagstotaler, DAO ind har stor +1-knap.
-Pakkedata gemmes kun lokalt i browseren på den enkelte PC. Tidligere dage bevares.
-Ingen Supabase-synkronisering endnu; 15-minuttersplanen er IKKE implementeret.
-Ingen sikker serverbaseret adgangskontrol; demo-PIN kan omgås.
-Bonprint via Windows printdialog er ikke testet på HS-58CUB.
-Ikke godkendt til lovpligtig kassebrug. Brug kun testdata.
-
-Ved opdatering fra v1.1 på samme domæne bevares normalt browserens lokale data. Eksporter backup før opdatering.
+VIGTIGT: Denne version er kun til test, ikke lovpligtig kasse. Data og profilbilleder gemmes lokalt i browseren. Den offentlige medarbejderprofil er ikke sikker identitetskontrol; admin-PIN er hårdkodet i kildekoden og er ikke sikker. Synkronisering til Supabase/PakkeTracker er endnu ikke implementeret. Printeren bruger Windows printdialog. Brug ikke persondata eller rigtige salg i testen.
+Eksisterende lokale v1.2-data bevares, når appen åbnes på samme adresse og browserprofil. Tag en backup før opdatering.
