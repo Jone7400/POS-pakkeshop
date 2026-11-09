@@ -55,7 +55,7 @@ button,.product-buttons,.category-buttons,.quick-actions,.dao-controls,.product-
 .header-sync{display:flex;gap:7px;flex-wrap:wrap;align-items:center;justify-content:flex-end;max-width:540px}.header-sync small{font-size:11px;color:#a7b7ca}
 @media(max-width:650px){header{align-items:flex-start}.header-sync{max-width:190px;justify-content:flex-end}.header-sync small{font-size:10px}}
 .product-edit-actions{display:flex;gap:5px;flex-wrap:wrap}.product-edit-actions button{padding:7px 10px;min-height:36px}
-</style></head><body><header><div><div class="brandline"><img src="./logo-header.png" alt="Østergades Pakkeshop"><h1>Østergades POS</h1></div><small>v2.6</small></div><div class="row"><div class="header-sync"><small id="cloudStatus" class="muted">Cloud: ikke forbundet</small><small id="storeStatus" class="muted" style="margin-left:12px">Butikssalg: afventer</small><small id="trackerStatus" class="muted" style="margin-left:12px">PakkeTracker: afventer login</small></div><button id="userChip" class="secondary hidden" onclick="logout()" title="Tryk for at logge ud"><img id="userAvatar" src="./icon-192.png" alt="Aktiv medarbejder"><span id="who"></span><span aria-hidden="true">↪</span></button></div></header><main>
+</style></head><body><header><div><div class="brandline"><img src="./logo-header.png" alt="Østergades Pakkeshop"><h1>Østergades POS</h1></div><small>v2.7</small></div><div class="row"><div class="header-sync"><small id="cloudStatus" class="muted">Cloud: ikke forbundet</small><small id="storeStatus" class="muted" style="margin-left:12px">Butikssalg: afventer</small><small id="trackerStatus" class="muted" style="margin-left:12px">PakkeTracker: afventer login</small></div><button id="userChip" class="secondary hidden" onclick="logout()" title="Tryk for at logge ud"><img id="userAvatar" src="./icon-192.png" alt="Aktiv medarbejder"><span id="who"></span><span aria-hidden="true">↪</span></button></div></header><main>
 <section id="cloudLogin" class="login-stage"><h2>Log ind på Østergades POS</h2><p class="muted">Brug din eksisterende PakkeTracker-konto</p><div class="card" style="max-width:440px;margin:18px auto;text-align:left"><label>E-mail</label><input id="cloudEmail" type="email" autocomplete="username" placeholder="Din e-mail"><label>Adgangskode</label><input id="cloudPassword" type="password" autocomplete="current-password" placeholder="Adgangskode" onkeydown="if(event.key==='Enter')cloudSignIn()"><button style="width:100%;margin-top:12px" onclick="cloudSignIn()">Log ind</button><p id="cloudError" class="muted" role="status"></p></div></section><section id="loginView" class="login-stage hidden" class="login-stage"><h2>Hvem arbejder i dag?</h2><p class="muted">Tryk på din profil for at åbne kassen</p><div id="profileTiles" class="profile-grid"></div><div class="row" style="justify-content:center;margin-top:24px"><button class="admin-entry" onclick="showAdminLogin()">⚙ Administration</button></div></section>
 <section id="app" class="hidden"><div class="nav"><button id="navPos" onclick="tab('pos')">🛒 Kasse</button><button id="navAdmin" class="hidden" onclick="tab('admin')">⚙️ Administrator</button></div><div id="notice"></div><div class="row" style="justify-content:flex-end"><button class="secondary" onclick="syncCloud()" style="padding:5px 9px;font-size:12px">Synkronisér</button></div>
 <div id="pos" class="hidden"><div id="posOrderPanel" class="card hidden"><h2>Ordre fra kvittering</h2><div id="posOrderDetail"></div></div><div class="pos-workspace"><div class="pos-left"><div class="card pos-products"><h2>🛒 Kasse</h2><div class="row scan-row"><input id="scan" placeholder="Scan stregkode eller varenummer" style="flex:1" onkeydown="if(event.key==='Enter'||event.key==='Tab'){event.preventDefault();scanItem()}"><button onclick="scanItem()">Tilføj</button></div><div id="categoryButtons" class="category-buttons"></div><div id="productButtons" class="product-buttons"></div></div><div class="card pos-cart"><h2>Kurv</h2><div id="cartList"></div><div class="row between"><strong>Total inkl. moms</strong><span class="big" id="cartTotal">0,00 kr.</span></div><div class="row payment-row"><button onclick="checkout('Kontant')">Kontant</button><button onclick="checkout('MobilePay')">MobilePay</button><button class="secondary" onclick="clearCart()">Ryd kurv</button></div></div><div class="card" id="todayOrdersCard"><div class="row between"><h2>🧾 Dagens ordrer</h2><small class="muted">Tryk på en ordre for at genudskrive</small></div><div id="todayOrdersList"></div></div></div><div class="card packages-section"><div class="row between"><h2>📦 Pakkeregistrering</h2><div class="row date-controls"><label for="parcelDate" style="margin:0">Dato</label><input id="parcelDate" type="date" onchange="selectParcelDate(this.value)"><button class="secondary" onclick="selectParcelDate(key())">I dag</button><span class="muted" id="todayDate"></span></div></div><div id="packageGrid" class="package-layout"></div><details class="sync-details"><summary>Detaljer om PakkeTracker-synkronisering</summary><div class="muted" id="trackerDateDetails" style="margin-top:10px;white-space:pre-wrap">Synkroniseringsdatoer vises her.</div></details></div></div></div>
@@ -275,28 +275,66 @@ function exportData(){let blob=new Blob([JSON.stringify(data,null,2)],{type:'app
 
 const SUPABASE_URL='https://paqeijcqyjvsehnxzwgw.supabase.co';
 const SUPABASE_KEY='sb_publishable_lPrumhqAUJlWsivvbD-DPA_764Ss3uP';
-let cloudUser=null,cloudToken=null,cloudRefresh=null,cloudRevision=null,cloudDirty=false,cloudBusy=false,cloudTimer=null;
+let cloudUser=null,cloudToken=null,cloudRefresh=null,cloudRevision=null,cloudDirty=localStorage.getItem('ost_pos_cloud_dirty')==='1',cloudBusy=false,cloudTimer=null;
+let tokenExpiresAt=0,refreshPromise=null,authRecoveryNeeded=false;
 const cloudStateKey='ost_pos_cloud_auth';
 function cloudStatus(t){const n=el('cloudStatus');if(n)n.textContent='Cloud: '+t}
 function queueCloudSave(){
-  if(!cloudUser)return;
-  cloudDirty=true;cloudStatus('Afventer synkronisering');
-  clearTimeout(cloudTimer);cloudTimer=setTimeout(()=>syncCloud(),1800);
+  cloudDirty=true;localStorage.setItem('ost_pos_cloud_dirty','1');cloudStatus('Afventer synkronisering');
+  if(cloudUser){clearTimeout(cloudTimer);cloudTimer=setTimeout(()=>syncCloud(),1800);}
+}
+function sessionExpiry(token,expiresIn){
+  if(Number(expiresIn)>0)return Date.now()+Number(expiresIn)*1000;
+  try{const payload=JSON.parse(atob(token.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')));return Number(payload.exp)*1000||0}catch{return 0}
+}
+function persistCloudSession(session){
+  cloudToken=session.access_token;cloudRefresh=session.refresh_token||cloudRefresh;cloudUser=session.user||cloudUser;
+  tokenExpiresAt=sessionExpiry(cloudToken,session.expires_in);
+  localStorage.setItem(cloudStateKey,JSON.stringify({access_token:cloudToken,refresh_token:cloudRefresh,user:cloudUser,expires_at:tokenExpiresAt}));
+  authRecoveryNeeded=false;
+}
+async function refreshCloudSession(){
+  if(refreshPromise)return refreshPromise;
+  refreshPromise=(async()=>{
+    const saved=JSON.parse(localStorage.getItem(cloudStateKey)||'null');
+    const refresh=cloudRefresh||saved?.refresh_token;
+    if(!refresh)throw Error('Login udløbet – log ind igen. Lokale data er bevaret.');
+    const response=await fetch(SUPABASE_URL+'/auth/v1/token?grant_type=refresh_token',{
+      method:'POST',headers:{apikey:SUPABASE_KEY,'Content-Type':'application/json'},body:JSON.stringify({refresh_token:refresh})
+    });
+    const result=await response.json().catch(()=>({}));
+    if(!response.ok||!result.access_token)throw Error(result.error_description||result.msg||result.message||'Kunne ikke forny login');
+    persistCloudSession(result);
+    return result;
+  })().finally(()=>{refreshPromise=null});
+  return refreshPromise;
+}
+function isAuthExpired(response,body){
+  return response.status===401||(/jwt expired|token.*expired|invalid jwt/i.test(String(body?.message||body?.error_description||body?.error||'')));
 }
 async function cloudRequest(path,options={}){
-  const headers={'apikey':SUPABASE_KEY,'Content-Type':'application/json',...(cloudToken?{'Authorization':'Bearer '+cloudToken}:{}) ,...(options.headers||{})};
-  const response=await fetch(SUPABASE_URL+path,{...options,headers});
-  const raw=await response.text();let result;
-  try{result=raw?JSON.parse(raw):null}catch{result=raw}
+  const isAuthEndpoint=path.startsWith('/auth/v1/');
+  if(!isAuthEndpoint&&cloudToken&&tokenExpiresAt&&Date.now()>tokenExpiresAt-120000)await refreshCloudSession();
+  async function send(){
+    const headers={'apikey':SUPABASE_KEY,'Content-Type':'application/json',...(cloudToken?{'Authorization':'Bearer '+cloudToken}:{}) ,...(options.headers||{})};
+    const response=await fetch(SUPABASE_URL+path,{...options,headers});
+    const raw=await response.text();let result;
+    try{result=raw?JSON.parse(raw):null}catch{result=raw}
+    return {response,result};
+  }
+  let {response,result}=await send();
+  if(!response.ok&&!isAuthEndpoint&&isAuthExpired(response,result)){
+    try{await refreshCloudSession();({response,result}=await send())}
+    catch(e){authRecoveryNeeded=true;cloudStatus('Login skal fornyes – lokale data bevaret');throw e}
+  }
   if(!response.ok)throw Error(result?.message||result?.error_description||result?.error||('HTTP '+response.status));
   return result;
 }
 async function acceptCloudSession(session){
-  cloudToken=session.access_token;cloudRefresh=session.refresh_token;cloudUser=session.user;
-  localStorage.setItem(cloudStateKey,JSON.stringify({access_token:cloudToken,refresh_token:cloudRefresh,user:cloudUser}));
+  persistCloudSession(session);
   el('cloudLogin').classList.add('hidden');el('loginView').classList.remove('hidden');
   await loadCloud();renderLogin();
-  if(cloudRevision!==null&&cloudRevision>0)await syncTracker(false);await syncStoreSales(false);
+  if(cloudRevision!==null&&cloudRevision>0&&!cloudDirty){await syncTracker(false);await syncStoreSales(false)}
 }
 async function cloudSignIn(){
   const email=el('cloudEmail').value.trim(),password=el('cloudPassword').value;
@@ -309,9 +347,9 @@ async function cloudSignIn(){
   }catch(e){el('cloudError').textContent='Login mislykkedes: '+e.message}
 }
 async function cloudSignOut(){
-  if(cloudDirty&&!confirm('Der er ændringer, som endnu ikke er gemt i skyen. Vil du logge ud alligevel?'))return;
+  if(cloudDirty&&!confirm('Der er ændringer, som endnu ikke er gemt i skyen. Tag en JSON-backup før du logger ud. Vil du fortsætte?'))return;
   try{await cloudRequest('/auth/v1/logout',{method:'POST'})}catch{}
-  cloudUser=null;cloudToken=null;cloudRefresh=null;cloudRevision=null;trackerLastSignature=null;
+  cloudUser=null;cloudToken=null;cloudRefresh=null;cloudRevision=null;tokenExpiresAt=0;trackerLastSignature=null;
   localStorage.removeItem(cloudStateKey);logout();
   el('loginView').classList.add('hidden');el('cloudLogin').classList.remove('hidden');
 }
@@ -320,7 +358,7 @@ async function loadCloud(){
   try{
     const rows=await cloudRequest('/rest/v1/pos_state?select=payload,revision&limit=1');
     if(rows.length){
-      if(cloudDirty){cloudStatus('Lokale ændringer afventer; clouddata er ikke overskrevet');return}
+      if(cloudDirty){cloudRevision=rows[0].revision;cloudStatus('Lokale ændringer afventer – clouddata er ikke overskrevet');return}
       const payload=rows[0].payload;
       if(!payload||!Array.isArray(payload.products)||!Array.isArray(payload.sales))throw Error('Ugyldigt cloudformat');
       data=payload;cloudRevision=rows[0].revision;
@@ -346,25 +384,33 @@ async function syncCloud(){
     if(result===null||result===undefined)throw Error('Ingen svar fra databasen');
     if(result===-1){cloudStatus('Konflikt: data ændret på en anden enhed. Eksportér backup før du fortsætter');return}
     cloudRevision=Number(result);
-    if(JSON.stringify(data)===JSON.stringify(payload)){cloudDirty=false;cloudStatus('Synkroniseret');setTimeout(()=>{syncTracker(false);syncStoreSales(false)},0)}else{cloudStatus('Nye ændringer afventer');queueCloudSave()}
+    if(JSON.stringify(data)===JSON.stringify(payload)){cloudDirty=false;localStorage.removeItem('ost_pos_cloud_dirty');cloudStatus('Synkroniseret');setTimeout(()=>{syncTracker(false);syncStoreSales(false)},0)}else{cloudStatus('Nye ændringer afventer');queueCloudSave()}
   }catch(e){cloudStatus('Ikke synkroniseret: '+e.message)}
   finally{cloudBusy=false}
 }
 async function initializeCloud(){
   if(!cloudUser||cloudRevision!==0)return;
   if(!confirm('Gem de aktuelle lokale POS-data i denne Supabase-konto? Kontrollér at du er logget ind på den rigtige konto.'))return;
-  cloudDirty=true;await syncCloud();
+  cloudDirty=true;localStorage.setItem('ost_pos_cloud_dirty','1');await syncCloud();
 }
 async function resumeCloud(){
   try{
     const stored=JSON.parse(localStorage.getItem(cloudStateKey)||'null');if(!stored?.refresh_token)return;
-    const session=await cloudRequest('/auth/v1/token?grant_type=refresh_token',{method:'POST',body:JSON.stringify({refresh_token:stored.refresh_token})});
+    cloudRefresh=stored.refresh_token;cloudToken=stored.access_token;cloudUser=stored.user;tokenExpiresAt=stored.expires_at||sessionExpiry(stored.access_token||'');
+    const session=await refreshCloudSession();
     await acceptCloudSession(session);
-  }catch(e){localStorage.removeItem(cloudStateKey);el('cloudError').textContent='Log ind igen for at fortsætte'}
+  }catch(e){
+    cloudStatus('Login kræves – lokale data bevaret');
+    el('cloudError').textContent='Log ind igen for at synkronisere. '+e.message;
+    // Keep refresh credentials until the user explicitly signs out; never delete local POS data.
+  }
 }
-setInterval(()=>{if(cloudUser){syncCloud();syncTracker(false);syncStoreSales(false)}},15*60*1000);
-window.addEventListener('online',()=>{if(cloudUser){syncCloud();syncTracker(false);syncStoreSales(false)}});
-
+setInterval(()=>{
+  if(!cloudUser)return;
+  if(tokenExpiresAt&&Date.now()>tokenExpiresAt-5*60*1000)refreshCloudSession().catch(e=>cloudStatus('Login skal fornyes: '+e.message));
+},60000);
+setInterval(()=>{if(cloudUser){syncCloud();if(!cloudDirty&&!cloudBusy){syncTracker(false);syncStoreSales(false)}}},15*60*1000);
+window.addEventListener('online',()=>{if(cloudUser){syncCloud();if(!cloudDirty&&!cloudBusy){syncTracker(false);syncStoreSales(false)}}});
 
 // PakkeTracker bridge: POS is authoritative for parcel counts, not for shop sales or rates.
 const TRACKER_MAP={'GLS ind':'gls_in','GLS ud':'gls_out','GLS anmeldt':'gls_notice','GLS retur':'gls_return','DAO ind':'dao_in','DAO ud':'dao_out','AROX':'arox'};
