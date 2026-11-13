@@ -1,0 +1,117 @@
+[
+  {
+    "name": "Tape",
+    "id": "1003",
+    "image": "./assets/products/pos-tape.png"
+  },
+  {
+    "name": "Quick charger 20W",
+    "id": "6976552900003",
+    "image": "./assets/products/pos-quick-charger-20w.png"
+  },
+  {
+    "name": "25W Adapter",
+    "id": "8806090973369",
+    "image": "./assets/products/pos-25w-adapter.png"
+  },
+  {
+    "name": "Sticky Notes",
+    "id": "44686363958",
+    "image": "./assets/products/pos-sticky-notes.png"
+  },
+  {
+    "name": "Notebook",
+    "id": "6972418659153",
+    "image": "./assets/products/pos-notebook.png"
+  },
+  {
+    "name": "Lineal",
+    "id": "1000",
+    "image": "./assets/products/pos-lineal.png"
+  },
+  {
+    "name": "Bryant spidser",
+    "id": "1001",
+    "image": "./assets/products/pos-bryant-spidser.png"
+  },
+  {
+    "name": "White pen",
+    "id": "6952831301426",
+    "image": "./assets/products/pos-white-pen.png"
+  },
+  {
+    "name": "Softline touch",
+    "id": "6926988620471",
+    "image": "./assets/products/pos-softline-touch.png"
+  },
+  {
+    "name": "Hviskelæder lille",
+    "id": "6931747140718",
+    "image": "./assets/products/pos-hviskelaeder-lille.png"
+  },
+  {
+    "name": "Hviskelæder stor",
+    "id": "6920930340554",
+    "image": "./assets/products/pos-hviskelaeder-stor.png"
+  },
+  {
+    "name": "Everlast color",
+    "id": "085126091217",
+    "image": "./assets/products/pos-everlast-color.png"
+  },
+  {
+    "name": "Color pencil",
+    "id": "6922686418815",
+    "image": "./assets/products/pos-color-pencil.png"
+  },
+  {
+    "name": "Oplader stik",
+    "id": "37639021562779",
+    "image": "./assets/products/pos-oplader-stik.png"
+  },
+  {
+    "name": "Hurting oplader stik",
+    "id": "1005",
+    "image": "./assets/products/pos-hurting-oplader-stik.png"
+  },
+  {
+    "name": "Highlight touch",
+    "id": "47683421316",
+    "image": "./assets/products/pos-highlight-touch.png"
+  },
+  {
+    "name": "Sparkasse 20",
+    "id": "1007",
+    "image": "./assets/products/pos-sparkasse-20.png"
+  },
+  {
+    "name": "Brevkode <100g",
+    "id": "1013",
+    "image": "./assets/products/pos-brevkode-100g.png"
+  },
+  {
+    "name": "Brevkode 100-250g",
+    "id": "1014",
+    "image": "./assets/products/pos-brevkode-100-250g.png"
+  },
+  {
+    "name": "Brevkode PLUS",
+    "id": "1015",
+    "image": "./assets/products/pos-brevkode-plus.png"
+  },
+  {
+    "name": "Brevkode PLUS 100-250g",
+    "id": "1016",
+    "image": "./assets/products/pos-brevkode-plus-100-250g.png"
+  },
+  {
+    "name": "Brevkode udland <100g",
+    "id": "1017",
+    "image": "./assets/products/pos-brevkode-udland-100g.png"
+  },
+  {
+    "name": "Brevkode udland 100-250g",
+    "id": "1018",
+    "image": "./assets/products/pos-brevkode-udland-100-250g.png"
+  }
+]

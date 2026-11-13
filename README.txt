@@ -1,3 +1,9 @@
-Østergades POS v1.9 – ikoner til produkter. Upload ALLE filer og hele assets-mappen til roden af POS GitHub repository. Ingen SQL-ændringer. Bevarer synkroniseringskoden fra din uploadede index.html. Ikoner kan vælges under Administration > Varer & lager. Standardikoner er filer i assets/products og ikke base64 i Supabase. Eksporter JSON-backup før opdatering.
+Østergades POS – 23 nye produktikoner
 
-Version 2.2: Sketch layout, parcel quick-add buttons, and embedded fallback product icons. Upload all files and the assets folder.
+1. Upload PNG-filerne fra assets/products til den tilsvarende mappe på GitHub.
+2. Den medfølgende JSON er en KOPI af din backup med opdaterede image-felter.
+3. Importér IKKE backup direkte på kassesystemet uden først at eksportere en frisk backup: dette er et øjebliksbillede fra 13. november og kan overskrive nyere salg og pakketal.
+4. For sikker opdatering af kun ikonerne skal image-felterne i varekartoteket flettes ind i de nyeste data, fx i en fremtidig index.html-opdatering.
+5. Ikonerne er automatisk frilagt fra et AI-genereret oversigtsbillede; kontrollér dem visuelt inden brug.
+
+Eksisterende ikoner er ikke ændret.
